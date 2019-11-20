@@ -43,7 +43,6 @@ bool enterPasswordToAccount(UserOfProgram userToLog){
     return false;
 }
 
-
 int logUserToProgram(vector <UserOfProgram> usersList){
     if (usersList.size() == 0){
         cout << "Brak uzytkownikow w liscie" << endl;
@@ -108,7 +107,8 @@ vector <UserOfProgram> registerUserToProgram(vector <UserOfProgram> usersList){
         newUserId = 1;
     }
     else {
-        int lastUserId = usersList[usersList.size() - 1].userId;
+        int lastUserListIndex = usersList.size() - 1
+        int lastUserId = usersList[lastUserListIndex].userId;
         newUserId = lastUserId + 1;
     }
     newUser.userId = newUserId;
@@ -155,7 +155,6 @@ UserOfProgram changeLineToUserData(string inputLine){
     return userData;
 }
 
-
 vector <UserOfProgram> readUsersDataFromFile(){
     vector <UserOfProgram> listOfUsers(0);
     fstream fileOfUsersData;
@@ -200,11 +199,9 @@ int startMenu(){
     }
 }
 
-int main()
-{
+int main(){
     int logedUserId;
     while (true){
         logedUserId = startMenu();
     }
-
 }
