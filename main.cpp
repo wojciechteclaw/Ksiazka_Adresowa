@@ -1,23 +1,23 @@
 #include <iostream>
 #include <iostream>
 #include <fstream>
-#include <stdlib.h>
+#include <windows.h>
 #include <sstream>
 #include <vector>
 
 using namespace std;
 
 struct Contact{
-    int id;
+    int contactId;
+    int contactOwnerId;
     string name, surname, adres, email, phoneNumber;
 };
 
-string convertIntToString(int liczbaDoKonwersji)
-{
-    ostringstream ss;
-    ss << liczbaDoKonwersji;
-    return ss.str();
-}
+struct UserOfProgram{
+    int userId;
+    string userLogin;
+    string userPassword;
+};
 
 int convertStringToInt(string liczbaDoKonwersji)
 {
@@ -25,260 +25,186 @@ int convertStringToInt(string liczbaDoKonwersji)
     return number;
 }
 
-Contact changeLineOfTextToContactStructure(string lineOfText){
-    Contact temporaryContact;
-    string temporaryWord;
-    int lengthOfWord;
-    for (int i = 0; i < 6; i++){
-        lengthOfWord = lineOfText.find('|');
-        temporaryWord = lineOfText.substr(0, lengthOfWord);
-        switch (i){
-        case 0:{
-            temporaryContact.id = convertStringToInt(temporaryWord);
+bool enterPasswordToAccount(UserOfProgram userToLog){
+    string password;
+    for (int i = 3; i != 0; i--){
+        cout << "Podaj haslo: ";
+        cin >> password;
+        if (password == userToLog.userPassword){
+                cout << "Pomyslnie zalogowano do konta";
+                return true;
         }
-        break;
-        case 1:{
-            temporaryContact.name = temporaryWord;
+        else {
+            cout << "Podano bledne haslo. Pozostalo " << i - 1 << " prob logowania" << endl;
+            Sleep(1000);
         }
-        break;
-        case 2:{
-            temporaryContact.surname = temporaryWord;
-        }
-        break;
-        case 3:{
-            temporaryContact.adres = temporaryWord;
-        }
-        break;
-        case 4:{
-            temporaryContact.email = temporaryWord;
-        }
-        break;
-        case 5:{
-            temporaryContact.phoneNumber = temporaryWord;
-        }
-        break;
-        }
-        lineOfText.replace(0, lengthOfWord + 1, "");
     }
-    return temporaryContact;
+    cout << "Przekroczono dopuszczalna liczbe prob logowania. Logowanie nie powiodlo sie!" << endl;
+    return false;
 }
 
-vector<Contact> readContactsFromFile(){
-    vector<Contact> listOfContacts(0);
-    fstream fileOfContacts;
-    Contact temporaryContact;
-    string line;
-    fileOfContacts.open("databaseContact.txt", ios::in);
-    if (fileOfContacts.good() == true){
-        while (getline(fileOfContacts, line)){
-                temporaryContact = changeLineOfTextToContactStructure(line);
-                listOfContacts.push_back(temporaryContact);
-        }
-    }
-    else{
-        fileOfContacts.close();
-    }
-    return listOfContacts;
-}
 
-void addContactToTextFileOfDataBase(Contact contactToAdd){
-    fstream fileOfContacts;
-    fileOfContacts.open("databaseContact.txt",  ios::app);
-    if (fileOfContacts.good() == true){
-        fileOfContacts << contactToAdd.id << "|" << contactToAdd.name << "|" << contactToAdd.surname << "|";
-        fileOfContacts << contactToAdd.adres << "|" << contactToAdd.email << "|" << contactToAdd.phoneNumber << "|" << endl;
-        cout << "Kontakt zostal dodany pomysle do bazy" << endl;
-        fileOfContacts.close();
+int logUserToProgram(vector <UserOfProgram> usersList){
+    if (usersList.size() == 0){
+        cout << "Brak uzytkownikow w liscie" << endl;
+        return 0;
     }
     else {
-        cout << "Nie udalo sie dodac pliku" << endl;
-    }
-    fileOfContacts.close();
-    system("pause");
-}
-
-vector<Contact> addContactToDataBase(vector<Contact> listOfAllContacts){
-    Contact temporaryContact;
-    int lastContactOnTheListId;
-    if (listOfAllContacts.empty()){
-        lastContactOnTheListId = 0;
-    }
-    else{
-        lastContactOnTheListId = listOfAllContacts[listOfAllContacts.size() - 1].id;
-    }
-    int idNumber = lastContactOnTheListId + 1;
-    temporaryContact.id = idNumber;
-    cin.sync();
-    cout << "Podaj imie: ";
-    getline(cin, temporaryContact.name);
-    cout << "Podaj nazwisko: ";
-    getline(cin, temporaryContact.surname);
-    cout << "Podaj adres: ";
-    getline(cin,temporaryContact.adres);
-    cout << "Podaj email: ";
-    getline(cin, temporaryContact.email);
-    cout << "Podaj numer telefonu: ";
-    getline(cin, temporaryContact.phoneNumber);
-    listOfAllContacts.push_back(temporaryContact);
-    addContactToTextFileOfDataBase(temporaryContact);
-    return listOfAllContacts;
-}
-
-void displaySingleContact(Contact contactToDisplay){
-    cout << contactToDisplay.id << endl;
-    cout << contactToDisplay.name << endl;
-    cout << contactToDisplay.surname << endl;
-    cout << contactToDisplay.adres << endl;
-    cout << contactToDisplay.email << endl;
-    cout << contactToDisplay.phoneNumber << endl;
-}
-
-void findContactByName(vector<Contact> listOfAllContacts){
-    cout << "Podaj szukane imie: ";
-    string nameOfContact;
-    cin >> nameOfContact;
-    for (int i = 0; i < listOfAllContacts.size(); i++){
-        if (listOfAllContacts[i].name == nameOfContact){
-            displaySingleContact(listOfAllContacts[i]);
-            cout << endl;
+    string login;
+    cout << "Podaj login: ";
+    cin >> login;
+    for (int i = 0; i < usersList.size(); i++){
+        if (login == usersList[i].userLogin){
+            if (enterPasswordToAccount(usersList[i])) return usersList[i].userId;
+            else return 0;
         }
     }
-    system("pause");
+    cout << "Nie znaleziono loginu na liscie" << endl;
+    return 0;
+    }
 }
 
-void findContactBySurname(vector<Contact> listOfAllContacts){
-    cout << "Podaj szukane nazwisko: ";
-    string surnameOfContact;
-    cin >> surnameOfContact;
-    for (int i = 0; i < listOfAllContacts.size(); i++){
-        if (listOfAllContacts[i].surname == surnameOfContact){
-            displaySingleContact(listOfAllContacts[i]);
-            cout << endl;
+bool isLoginUsedByOtherUser(vector <UserOfProgram> usersList, string newUserLogin){
+    bool sameLoginExist = false;
+    for (int i = 0; i < usersList.size(); i++){
+        if (usersList[i].userLogin == newUserLogin){
+            sameLoginExist = true;
+            cout << "Wprowadzony login jest juz uzywany." << endl;
         }
     }
-    system("pause");
+    return sameLoginExist;
 }
 
-void displayAllContacts(vector<Contact> listOfAllContacts){
-    for (vector<Contact>::iterator itr = listOfAllContacts.begin(); itr != listOfAllContacts.end(); ++itr){
-        displaySingleContact(*itr);
-        cout << endl;
-    }
-    system("pause");
+string checkAndReturnCorrectLogin(vector <UserOfProgram> usersList){
+    string newUserLogin;
+    do{
+        cout << "Podaj login: ";
+        cin >> newUserLogin;
+    }while (isLoginUsedByOtherUser(usersList, newUserLogin));
+    return newUserLogin;
 }
 
-void reSaveAllContacts(vector<Contact> listOfAllContacts){
-    fstream fileOfContacts;
-    fileOfContacts.open("databaseContact.txt",  ios::out);
-    for (int i = 0; i < listOfAllContacts.size(); i++){
-        fileOfContacts << listOfAllContacts[i].id << "|" << listOfAllContacts[i].name << "|" << listOfAllContacts[i].surname << "|";
-        fileOfContacts << listOfAllContacts[i].adres << "|" << listOfAllContacts[i].email << "|" << listOfAllContacts[i].phoneNumber << "|" << endl;
+string checkPasswordWithVerification(){
+    string newUserPassword, newUserConfirmPassword;
+    while (true){
+        cout << "Podaj haslo: ";
+        cin >> newUserPassword;
+        cout << "Potwierdz haslo wprowadzajace je ponownie: ";
+        cin >> newUserConfirmPassword;
+        if (newUserConfirmPassword == newUserPassword){
+                return newUserPassword;
+        }
+        else {
+            cout << "Wprowadzono 2 rozne hasla - sprobuj ponownie. " << endl;
+        }
     }
-    cout << "Baza danych zostala zaaktualizowana" << endl;
-    fileOfContacts.close();
 }
 
-vector<Contact> deleteContact(vector<Contact> listOfAllContacts){
-    int idToDelete;
-    cout << "Podaj id uzytkownika do usuniecia: ";
-    cin >> idToDelete;
-    for (int i = 0; i < listOfAllContacts.size(); i++){
-        if (listOfAllContacts[i].id == idToDelete){
-            listOfAllContacts.erase(listOfAllContacts.begin() + i);
-        }
+vector <UserOfProgram> registerUserToProgram(vector <UserOfProgram> usersList){
+    UserOfProgram newUser;
+    int newUserId;
+    string newUserLogin, newUserPassword;
+    if (usersList.size() == 0){
+        newUserId = 1;
     }
-    reSaveAllContacts(listOfAllContacts);
-    system("pause");
-    return listOfAllContacts;
+    else {
+        int lastUserId = usersList[usersList.size() - 1].userId;
+        newUserId = lastUserId + 1;
+    }
+    newUser.userId = newUserId;
+    newUser.userLogin = checkAndReturnCorrectLogin(usersList);
+    newUser.userPassword = checkPasswordWithVerification();
+    usersList.push_back(newUser);
+    cout << "Dodano uzytkownika do programu" << endl;
+    return usersList;
 }
 
-Contact editSingleContact(Contact contactToEdit, int chosenOption){
-    string dataToEdition;
-    cout << "Edytuj wybrane dane: ";
-    cin.sync();
-    getline(cin, dataToEdition);
-    switch (chosenOption){
-        case 1:{
-            contactToEdit.name = dataToEdition;
-        }
-        break;
-        case 2:{
-            contactToEdit.surname = dataToEdition;
-        }
-        break;
-        case 3:{
-            contactToEdit.adres = dataToEdition;
-        }
-        break;
-        case 4:{
-            contactToEdit.email = dataToEdition;
-        }
-        break;
-        case 5:{
-            contactToEdit.phoneNumber = dataToEdition;
-        }
-        break;
+void saveUserDataToFile(vector <UserOfProgram> usersList){
+    fstream fileOfUsers;
+    fileOfUsers.open("Uzytkownicy.txt", ios::out);
+    for (int i = 0; i < usersList.size(); i++){
+        fileOfUsers << usersList[i].userId << "|" << usersList[i].userLogin << "|" << usersList[i].userPassword << "|" << endl;
     }
-    return contactToEdit;
+    cout << "Baza uzytkownikow zostala zaktualizowana" << endl;
+    fileOfUsers.close();
 }
 
-vector<Contact> editContactMenu(vector<Contact> listOfAllContacts){
-    cout << "Podaj id kontaktu do edycji: ";
-    int numberIdToEdition;
-    cin >> numberIdToEdition;
-    cout << "Wybierz dana do edycji: " << endl;
-    cout << "--------------------------------" << endl;
-    cout << "1 - imie" << endl;
-    cout << "2 - nazwisko" << endl;
-    cout << "3 - adres" << endl;
-    cout << "4 - email" << endl;
-    cout << "5 - numer telefonu" << endl;
-    cout << "6 - powrot z menu" << endl;
-    int editionOption;
-    cin >> editionOption;
-    if (editionOption >= 1 && editionOption <= 5){
-        listOfAllContacts[numberIdToEdition - 1] = editSingleContact(listOfAllContacts[numberIdToEdition - 1], editionOption);
-        reSaveAllContacts(listOfAllContacts);
+UserOfProgram changeLineToUserData(string inputLine){
+    UserOfProgram userData;
+    string temporaryWord;
+    int lengthOfWord;
+    for (int i = 0; i < 3; i ++){
+        lengthOfWord = inputLine.find('|');
+        temporaryWord = inputLine.substr(0, lengthOfWord);
+        switch (i){
+            case 0:{
+                userData.userId = convertStringToInt(temporaryWord);
+            }
+            break;
+            case 1:{
+                userData.userLogin = temporaryWord;
+            }
+            break;
+            case 2:{
+                userData.userPassword = temporaryWord;
+            }
+            break;
+        }
+        inputLine.replace(0, lengthOfWord + 1, "");
     }
-    system("pause");
-    return listOfAllContacts;
+    return userData;
+}
+
+
+vector <UserOfProgram> readUsersDataFromFile(){
+    vector <UserOfProgram> listOfUsers(0);
+    fstream fileOfUsersData;
+    UserOfProgram temporaryUser;
+    string inputLine;
+    fileOfUsersData.open("Uzytkownicy.txt", ios::in);
+    if (fileOfUsersData.good() == true){
+        while (getline(fileOfUsersData, inputLine)){
+            temporaryUser = changeLineToUserData(inputLine);
+            listOfUsers.push_back(temporaryUser);
+        }
+    }
+    fileOfUsersData.close();
+    return listOfUsers;
+}
+
+int startMenu(){
+    while (true){
+        cout << "Witaj w programie \"Ksiazka adresowa\" " << endl;
+        cout << "________________________________" << endl;
+        cout << "1. Logowanie" << endl;
+        cout << "2. Rejestracja" << endl;
+        cout << "3. Zamknij program" << endl;
+        cout << "Wybierz opcje z menu i wcisnij enter: ";
+        vector <UserOfProgram> usersDatabase = readUsersDataFromFile();
+        int userMenuOption;
+        cin >> userMenuOption;
+        int signedInUserId;
+        switch (userMenuOption){
+            case 1:
+                signedInUserId = logUserToProgram(usersDatabase);
+            break;
+            case 2: {
+                usersDatabase = registerUserToProgram(usersDatabase);
+                saveUserDataToFile(usersDatabase);
+            }
+            break;
+            case 3: exit(0);
+        }
+    Sleep(2500);
+    system("cls");
+    }
 }
 
 int main()
 {
-    vector<Contact> listOfAllContacts;
-    int userChoiceOfOptionFromMenu;
-    listOfAllContacts = readContactsFromFile();
+    int logedUserId;
     while (true){
-        cout << "Wybierz opcje z menu" << endl;
-        cout << "-----------------------------" << endl;
-        cout << "1. Dodaj adresata" << endl;
-        cout << "2. Wyszukaj po imieniu" << endl;
-        cout << "3. Wyszukaj po nazwisku" << endl;
-        cout << "4. Wyswietl wszystkich adresatow" << endl;
-        cout << "5. Usun adresata" << endl;
-        cout << "6. Edytuj adresata" << endl;
-        cout << "9. Zakoncz program" << endl;
-        cout << endl;
-        cout << "Wprowadz opcje: ";
-        cin >> userChoiceOfOptionFromMenu;
-
-        switch (userChoiceOfOptionFromMenu){
-            case 1: listOfAllContacts = addContactToDataBase(listOfAllContacts);
-                break;
-            case 2: findContactByName(listOfAllContacts);
-                break;
-            case 3: findContactBySurname(listOfAllContacts);
-                break;
-            case 4: displayAllContacts(listOfAllContacts);
-                break;
-            case 5: listOfAllContacts = deleteContact(listOfAllContacts);
-                break;
-            case 6: listOfAllContacts = editContactMenu(listOfAllContacts);
-                break;
-            case 9: exit(0);
-                break;
-        }
-        system("cls");
+        logedUserId = startMenu();
     }
+
 }
