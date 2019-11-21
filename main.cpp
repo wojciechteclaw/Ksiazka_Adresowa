@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <windows.h>
+#include <stdio.h>
 #include <sstream>
 #include <vector>
 
@@ -200,12 +201,6 @@ int startMenu(){
     }
 }
 
-bool isContactAssignToUser(Contact userContact, int signedUserId){
-    if (signedUserId == userContact.contactOwnerId){
-        return true;
-    }
-    else return false;
-}
 
 ///////////////////ADDRESS BOOK PART BELOW ////////////////////////////
 
@@ -247,10 +242,8 @@ vector <Contact> readUsersDataFromFile(int signedUserId){
         while (getline(fileOfAllContacts, inputLine)){
             temporaryContact = convertLineToContactStructure(inputLine);
             if (temporaryContact.contactOwnerId == signedUserId){
-                cout << "dodano" << endl;
                 listOfUserContacts.push_back(temporaryContact);
             }
-            else cout << "nie dodano" << endl;
         }
     }
     fileOfAllContacts.close();
@@ -352,14 +345,62 @@ void displayAllContacts(vector<Contact> listOfAllContacts){
     system("pause");
 }
 
+void renameFile(){
+    remove("Adresaci.txt");
+    fstream oldFile;
+    fstream newFile;
+    oldFile.open("Adresaci_tymczasowy.txt", ios::in);
+    newFile.open("Adresaci.txt", ios::out);
+    string lineToTransfer;
+    while (getline(oldFile, lineToTransfer)){
+        newFile << lineToTransfer << endl;
+    }
+    oldFile.close();
+    newFile.close();
+}
+
+void saveDeletedContact(int numberIdOfEditedContact){
+    fstream originalFileOfContacts;
+    originalFileOfContacts.open("Adresaci.txt", ios::in);
+    if (originalFileOfContacts.good() != true){
+        cout << "Nie istnieje plik z adresatami" << endl;
+        exit(0);
+    }
+    fstream temporaryFile;
+    temporaryFile.open("Adresaci_tymczasowy.txt", ios::out);
+    string lineFromOriginalFile;
+    Contact temporaryContact;
+    while(getline(originalFileOfContacts, lineFromOriginalFile)){
+        temporaryContact = convertLineToContactStructure(lineFromOriginalFile);
+        if (temporaryContact.contactId != numberIdOfEditedContact){
+            temporaryFile << temporaryContact.contactId << "|" << temporaryContact.contactOwnerId << "|";
+            temporaryFile << temporaryContact.name << "|" << temporaryContact.surname << "|";
+            temporaryFile << temporaryContact.adres << "|" << temporaryContact.email<< "|";
+            temporaryFile << temporaryContact.phoneNumber << "|" << endl;
+            }
+        }
+    temporaryFile.close();
+    originalFileOfContacts.close();
+    renameFile();
+}
+
 vector <Contact> deleteContact(vector<Contact> listOfAllContacts){
     int idToDelete;
+    bool contactsIsUserContact = false;
     cout << "Podaj id uzytkownika do usuniecia: ";
     cin >> idToDelete;
     for (int i = 0; i < listOfAllContacts.size(); i++){
         if (listOfAllContacts[i].contactId == idToDelete){
             listOfAllContacts.erase(listOfAllContacts.begin() + i);
+            contactsIsUserContact = true;
         }
+    }
+    if (contactsIsUserContact){
+        cout << "Usunieto kontakt!" << endl;
+        saveDeletedContact( idToDelete);
+    }
+    else {
+        cout << "Brak wskazanego kontaktu!" << endl;
     }
     system("pause");
     return listOfAllContacts;
@@ -382,6 +423,7 @@ Contact editSingleContact(Contact contactToEdit, int chosenOption){
         case 5: contactToEdit.phoneNumber = dataToInsert;
         break;
     }
+
     return contactToEdit;
 }
 
