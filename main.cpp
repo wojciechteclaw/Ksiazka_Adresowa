@@ -1,5 +1,4 @@
 #include <iostream>
-#include <iostream>
 #include <fstream>
 #include <windows.h>
 #include <stdio.h>
@@ -171,21 +170,23 @@ vector <UserOfProgram> readUsersDataFromFile(){
     return listOfUsers;
 }
 
+void displayStartMentu(){
+    cout << "Witaj w programie \"Ksiazka adresowa\" " << endl;
+    cout << "________________________________" << endl;
+    cout << "1. Logowanie" << endl;
+    cout << "2. Rejestracja" << endl;
+    cout << "3. Zamknij program" << endl;
+    cout << "Wybierz opcje z menu i wcisnij enter: ";
+}
+
 int startMenu(){
     while (true){
-        cout << "Witaj w programie \"Ksiazka adresowa\" " << endl;
-        cout << "________________________________" << endl;
-        cout << "1. Logowanie" << endl;
-        cout << "2. Rejestracja" << endl;
-        cout << "3. Zamknij program" << endl;
-        cout << "Wybierz opcje z menu i wcisnij enter: ";
+        displayStartMentu();
         vector <UserOfProgram> usersDatabase = readUsersDataFromFile();
-        int userMenuOption;
+        int userMenuOption, signedInUserId;
         cin >> userMenuOption;
-        int signedInUserId;
         switch (userMenuOption){
-            case 1:
-                signedInUserId = logUserToProgram(usersDatabase);
+            case 1: signedInUserId = logUserToProgram(usersDatabase);
             break;
             case 2: {
                 usersDatabase = registerUserToProgram(usersDatabase);
@@ -203,44 +204,44 @@ int startMenu(){
 ///////////////////ADDRESS BOOK PART BELOW ////////////////////////////
 
 Contact convertLineToContactStructure(string lineOfData){
-    Contact temporaryContact;
+    Contact contact;
     string temporaryWord;
     int lengthOfWord;
     for (int i = 0; i < 7; i++){
         lengthOfWord = lineOfData.find('|');
         temporaryWord = lineOfData.substr(0, lengthOfWord);
         switch (i){
-            case 0: temporaryContact.contactId = convertStringToInt(temporaryWord);
+            case 0: contact.contactId = convertStringToInt(temporaryWord);
             break;
-            case 1: temporaryContact.contactOwnerId = convertStringToInt(temporaryWord);
+            case 1: contact.contactOwnerId = convertStringToInt(temporaryWord);
             break;
-            case 2: temporaryContact.name = temporaryWord;
+            case 2: contact.name = temporaryWord;
             break;
-            case 3: temporaryContact.surname = temporaryWord;
+            case 3: contact.surname = temporaryWord;
             break;
-            case 4: temporaryContact.adres = temporaryWord;
+            case 4: contact.adres = temporaryWord;
             break;
-            case 5: temporaryContact.email = temporaryWord;
+            case 5: contact.email = temporaryWord;
             break;
-            case 6: temporaryContact.phoneNumber = temporaryWord;
+            case 6: contact.phoneNumber = temporaryWord;
             break;
         }
         lineOfData.replace(0, lengthOfWord + 1, "");
     }
-    return temporaryContact;
+    return contact;
 }
 
 vector <Contact> readUsersDataFromFile(int signedUserId){
     vector<Contact> listOfUserContacts(0);
     fstream fileOfAllContacts;
-    Contact temporaryContact;
+    Contact contact;
     string inputLine;
     fileOfAllContacts.open("Adresaci.txt", ios::in);
     if (fileOfAllContacts.good() == true){
         while (getline(fileOfAllContacts, inputLine)){
-            temporaryContact = convertLineToContactStructure(inputLine);
-            if (temporaryContact.contactOwnerId == signedUserId){
-                listOfUserContacts.push_back(temporaryContact);
+            contact = convertLineToContactStructure(inputLine);
+            if (contact.contactOwnerId == signedUserId){
+                listOfUserContacts.push_back(contact);
             }
         }
     }
@@ -284,14 +285,14 @@ void addContactToMainFile(Contact contactToInsert){
 int maxUsedId(){
     int maxNumber = 0;
     fstream fileOfAllContacts;
-    Contact temporaryContact;
+    Contact contact;
     string inputLine;
     fileOfAllContacts.open("Adresaci.txt", ios::in);
     if (fileOfAllContacts.good() == true){
         while (getline(fileOfAllContacts, inputLine)){
-            temporaryContact = convertLineToContactStructure(inputLine);
-            if (temporaryContact.contactId > maxNumber){
-                maxNumber = temporaryContact.contactId;
+            contact = convertLineToContactStructure(inputLine);
+            if (contact.contactId > maxNumber){
+                maxNumber = contact.contactId;
             }
         }
     }
@@ -300,19 +301,19 @@ int maxUsedId(){
 }
 
 Contact getDataForNewUser(){
-    Contact temporaryContact;
+    Contact contact;
     cin.sync();
     cout << "Podaj imie: ";
-    getline(cin, temporaryContact.name);
+    getline(cin, contact.name);
     cout << "Podaj nazwisko: ";
-    getline(cin, temporaryContact.surname);
+    getline(cin, contact.surname);
     cout << "Podaj adres: ";
-    getline(cin,temporaryContact.adres);
+    getline(cin,contact.adres);
     cout << "Podaj email: ";
-    getline(cin, temporaryContact.email);
+    getline(cin, contact.email);
     cout << "Podaj numer telefonu: ";
-    getline(cin, temporaryContact.phoneNumber);
-    return temporaryContact;
+    getline(cin, contact.phoneNumber);
+    return contact;
 }
 
 vector <Contact> addContactToDataBase(vector<Contact> listOfAllContacts, int signedUserId){
@@ -324,12 +325,12 @@ vector <Contact> addContactToDataBase(vector<Contact> listOfAllContacts, int sig
         lastContactOnTheListId = maxUsedId();
     }
     int idNumber = lastContactOnTheListId + 1;
-    Contact temporaryContact = getDataForNewUser();
-    temporaryContact.contactId = idNumber;
-    temporaryContact.contactOwnerId = signedUserId;
+    Contact contact = getDataForNewUser();
+    contact.contactId = idNumber;
+    contact.contactOwnerId = signedUserId;
 
-    listOfAllContacts.push_back(temporaryContact);
-    addContactToMainFile(temporaryContact);
+    listOfAllContacts.push_back(contact);
+    addContactToMainFile(contact);
     cout << "Dodano pomyslnie kontakt do bazy" << endl;
     return listOfAllContacts;
 }
@@ -393,14 +394,14 @@ void saveDeletedContact(int numberIdOfEditedContact){
     fstream temporaryFile;
     temporaryFile.open("Adresaci_tymczasowy.txt", ios::out);
     string lineFromOriginalFile;
-    Contact temporaryContact;
+    Contact contact;
     while(getline(originalFileOfContacts, lineFromOriginalFile)){
-        temporaryContact = convertLineToContactStructure(lineFromOriginalFile);
-        if (temporaryContact.contactId != numberIdOfEditedContact){
-            temporaryFile << temporaryContact.contactId << "|" << temporaryContact.contactOwnerId << "|";
-            temporaryFile << temporaryContact.name << "|" << temporaryContact.surname << "|";
-            temporaryFile << temporaryContact.adres << "|" << temporaryContact.email<< "|";
-            temporaryFile << temporaryContact.phoneNumber << "|" << endl;
+        contact = convertLineToContactStructure(lineFromOriginalFile);
+        if (contact.contactId != numberIdOfEditedContact){
+            temporaryFile << contact.contactId << "|" << contact.contactOwnerId << "|";
+            temporaryFile << contact.name << "|" << contact.surname << "|";
+            temporaryFile << contact.adres << "|" << contact.email<< "|";
+            temporaryFile << contact.phoneNumber << "|" << endl;
             }
         }
     temporaryFile.close();
@@ -447,12 +448,12 @@ void saveEditedContact(Contact editedContact){
     fstream temporaryFile;
     temporaryFile.open("Adresaci_tymczasowy.txt", ios::out);
     string lineFromOriginalFile;
-    Contact temporaryContact;
+    Contact contact;
     while(getline(originalFileOfContacts, lineFromOriginalFile)){
-        temporaryContact = convertLineToContactStructure(lineFromOriginalFile);
-        if (temporaryContact.contactId != editedContact.contactId){
-            temporaryFile << temporaryContact.contactId << "|" << temporaryContact.contactOwnerId << "|" << temporaryContact.name << "|" << temporaryContact.surname << "|";
-            temporaryFile << temporaryContact.adres << "|" << temporaryContact.email<< "|" << temporaryContact.phoneNumber << "|" << endl;
+        contact = convertLineToContactStructure(lineFromOriginalFile);
+        if (contact.contactId != editedContact.contactId){
+            temporaryFile << contact.contactId << "|" << contact.contactOwnerId << "|" << contact.name << "|" << contact.surname << "|";
+            temporaryFile << contact.adres << "|" << contact.email<< "|" << contact.phoneNumber << "|" << endl;
             }
         else{
             temporaryFile << editedContact.contactId << "|" << editedContact.contactOwnerId << "|" << editedContact.name << "|" << editedContact.surname << "|";
