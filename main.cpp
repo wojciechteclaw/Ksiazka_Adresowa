@@ -246,9 +246,11 @@ vector <Contact> readUsersDataFromFile(int signedUserId){
     if (fileOfAllContacts.good() == true){
         while (getline(fileOfAllContacts, inputLine)){
             temporaryContact = convertLineToContactStructure(inputLine);
-            if (isContactAssignToUser){
+            if (temporaryContact.contactOwnerId == signedUserId){
+                cout << "dodano" << endl;
                 listOfUserContacts.push_back(temporaryContact);
             }
+            else cout << "nie dodano" << endl;
         }
     }
     fileOfAllContacts.close();
@@ -278,6 +280,16 @@ void displaySingleContact(Contact contactToDisplay){
     cout << contactToDisplay.phoneNumber << endl;
 }
 
+void addContactToMainFile(Contact contactToInsert){
+    fstream fileOfDataBase;
+    fileOfDataBase.open("Adresaci.txt", ios::out | ios::app);
+    fileOfDataBase << contactToInsert.contactId << "|" << contactToInsert.contactOwnerId << "|";
+    fileOfDataBase << contactToInsert.name << "|" << contactToInsert.surname << "|";
+    fileOfDataBase << contactToInsert.adres << "|" << contactToInsert.email<< "|";
+    fileOfDataBase << contactToInsert.phoneNumber << "|" << endl;
+    fileOfDataBase.close();
+}
+
 vector <Contact> addContactToDataBase(vector<Contact> listOfAllContacts, int signedUserId){
     Contact temporaryContact;
     int lastContactOnTheListId;
@@ -302,9 +314,7 @@ vector <Contact> addContactToDataBase(vector<Contact> listOfAllContacts, int sig
     cout << "Podaj numer telefonu: ";
     getline(cin, temporaryContact.phoneNumber);
     listOfAllContacts.push_back(temporaryContact);
-
-    // w tym miejscu bedzie plik lokalny nadpisywany
-    //addContactToTextFileOfDataBase(temporaryContact);
+    addContactToMainFile(temporaryContact);
     return listOfAllContacts;
 }
 
@@ -374,9 +384,6 @@ Contact editSingleContact(Contact contactToEdit, int chosenOption){
     }
     return contactToEdit;
 }
-
-
-
 
 vector<Contact> editContactMenu(vector<Contact> listOfAllContacts){
     cout << "Podaj id kontaktu do edycji: ";
