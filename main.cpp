@@ -20,8 +20,7 @@ struct UserOfProgram{
     string userPassword;
 };
 
-int convertStringToInt(string liczbaDoKonwersji)
-{
+int convertStringToInt(string liczbaDoKonwersji){
     int number = atoi(liczbaDoKonwersji.c_str());
     return number;
 }
@@ -195,12 +194,11 @@ int startMenu(){
             break;
             case 3: exit(0);
         }
-    Sleep(2500);
+    Sleep(1500);
     system("cls");
     if (signedInUserId != 0) return signedInUserId;
     }
 }
-
 
 ///////////////////ADDRESS BOOK PART BELOW ////////////////////////////
 
@@ -283,18 +281,26 @@ void addContactToMainFile(Contact contactToInsert){
     fileOfDataBase.close();
 }
 
-vector <Contact> addContactToDataBase(vector<Contact> listOfAllContacts, int signedUserId){
+int maxUsedId(){
+    int maxNumber = 0;
+    fstream fileOfAllContacts;
     Contact temporaryContact;
-    int lastContactOnTheListId;
-    if (listOfAllContacts.empty()){
-        lastContactOnTheListId = 0;
+    string inputLine;
+    fileOfAllContacts.open("Adresaci.txt", ios::in);
+    if (fileOfAllContacts.good() == true){
+        while (getline(fileOfAllContacts, inputLine)){
+            temporaryContact = convertLineToContactStructure(inputLine);
+            if (temporaryContact.contactId > maxNumber){
+                maxNumber = temporaryContact.contactId;
+            }
+        }
     }
-    else{
-        lastContactOnTheListId = listOfAllContacts[listOfAllContacts.size() - 1].contactId;
-    }
-    int idNumber = lastContactOnTheListId + 1;
-    temporaryContact.contactId = idNumber;
-    temporaryContact.contactOwnerId = signedUserId;
+    fileOfAllContacts.close();
+    return maxNumber;
+}
+
+Contact getDataForNewUser(){
+    Contact temporaryContact;
     cin.sync();
     cout << "Podaj imie: ";
     getline(cin, temporaryContact.name);
@@ -306,8 +312,25 @@ vector <Contact> addContactToDataBase(vector<Contact> listOfAllContacts, int sig
     getline(cin, temporaryContact.email);
     cout << "Podaj numer telefonu: ";
     getline(cin, temporaryContact.phoneNumber);
+    return temporaryContact;
+}
+
+vector <Contact> addContactToDataBase(vector<Contact> listOfAllContacts, int signedUserId){
+    int lastContactOnTheListId;
+    if (listOfAllContacts.empty()){
+        lastContactOnTheListId = 0;
+    }
+    else{
+        lastContactOnTheListId = maxUsedId();
+    }
+    int idNumber = lastContactOnTheListId + 1;
+    Contact temporaryContact = getDataForNewUser();
+    temporaryContact.contactId = idNumber;
+    temporaryContact.contactOwnerId = signedUserId;
+
     listOfAllContacts.push_back(temporaryContact);
     addContactToMainFile(temporaryContact);
+    cout << "Dodano pomyslnie kontakt do bazy" << endl;
     return listOfAllContacts;
 }
 
@@ -357,6 +380,7 @@ void renameFile(){
     }
     oldFile.close();
     newFile.close();
+    remove("Adresaci_tymczasowy.txt");
 }
 
 void saveDeletedContact(int numberIdOfEditedContact){
@@ -402,8 +426,42 @@ vector <Contact> deleteContact(vector<Contact> listOfAllContacts){
     else {
         cout << "Brak wskazanego kontaktu!" << endl;
     }
-    system("pause");
     return listOfAllContacts;
+}
+
+void saveToTemporaryFile(fstream fileName, Contact contactToSave){
+    fileName << contactToSave.contactId << "|" << contactToSave.contactOwnerId << "|";
+    fileName << contactToSave.name << "|" << contactToSave.surname << "|";
+    fileName << contactToSave.adres << "|" << contactToSave.email<< "|";
+    fileName << contactToSave.phoneNumber << "|" << endl;
+
+}
+
+void saveEditedContact(Contact editedContact){
+    fstream originalFileOfContacts;
+    originalFileOfContacts.open("Adresaci.txt", ios::in);
+    if (originalFileOfContacts.good() != true){
+        cout << "Nie istnieje plik z adresatami" << endl;
+        exit(0);
+    }
+    fstream temporaryFile;
+    temporaryFile.open("Adresaci_tymczasowy.txt", ios::out);
+    string lineFromOriginalFile;
+    Contact temporaryContact;
+    while(getline(originalFileOfContacts, lineFromOriginalFile)){
+        temporaryContact = convertLineToContactStructure(lineFromOriginalFile);
+        if (temporaryContact.contactId != editedContact.contactId){
+            temporaryFile << temporaryContact.contactId << "|" << temporaryContact.contactOwnerId << "|" << temporaryContact.name << "|" << temporaryContact.surname << "|";
+            temporaryFile << temporaryContact.adres << "|" << temporaryContact.email<< "|" << temporaryContact.phoneNumber << "|" << endl;
+            }
+        else{
+            temporaryFile << editedContact.contactId << "|" << editedContact.contactOwnerId << "|" << editedContact.name << "|" << editedContact.surname << "|";
+            temporaryFile << editedContact.adres << "|" << editedContact.email<< "|" << editedContact.phoneNumber << "|" << endl;
+        }
+        }
+    temporaryFile.close();
+    originalFileOfContacts.close();
+    renameFile();
 }
 
 Contact editSingleContact(Contact contactToEdit, int chosenOption){
@@ -423,14 +481,10 @@ Contact editSingleContact(Contact contactToEdit, int chosenOption){
         case 5: contactToEdit.phoneNumber = dataToInsert;
         break;
     }
-
     return contactToEdit;
 }
 
-vector<Contact> editContactMenu(vector<Contact> listOfAllContacts){
-    cout << "Podaj id kontaktu do edycji: ";
-    int numberIdToEdition;
-    cin >> numberIdToEdition;
+void dispalyEditContactMenuOptions(){
     cout << "Wybierz dana do edycji: " << endl;
     cout << "--------------------------------" << endl;
     cout << "1 - imie" << endl;
@@ -439,23 +493,54 @@ vector<Contact> editContactMenu(vector<Contact> listOfAllContacts){
     cout << "4 - email" << endl;
     cout << "5 - numer telefonu" << endl;
     cout << "6 - powrot z menu" << endl;
+
+}
+
+vector<Contact> editContactMenu(vector<Contact> listOfAllContacts, int signedUserId){
+    cout << "Podaj id kontaktu do edycji: ";
+    int numberIdToEdition;
+    cin >> numberIdToEdition;
     int editionOption;
+    dispalyEditContactMenuOptions();
     cin >> editionOption;
     if (editionOption >= 1 && editionOption <= 5){
-        listOfAllContacts[numberIdToEdition - 1] = editSingleContact(listOfAllContacts[numberIdToEdition - 1], editionOption);
+        for (int i = 0; i < listOfAllContacts.size(); i++){
+            if (signedUserId == listOfAllContacts[i].contactOwnerId && listOfAllContacts[i].contactId == numberIdToEdition){
+                listOfAllContacts[i] = editSingleContact(listOfAllContacts[i], editionOption);
+                saveEditedContact(listOfAllContacts[i]);
+                cout << "Edytowano kontakt" << endl;
+            }
+        }
     }
     return listOfAllContacts;
+}
+
+string insertNewPassword(){
+    string newUserPassword, newUserConfirmPassword;
+    while (true){
+        cout << "Podaj nowe haslo: ";
+        cin >> newUserPassword;
+        cout << "Potwierdz nowe haslo ponowanie: ";
+        cin >> newUserConfirmPassword;
+        if (newUserConfirmPassword == newUserPassword){
+                return newUserPassword;
+        }
+        else {
+            cout << "Wprowadzono 2 rozne hasla - sprobuj ponownie. " << endl;
+        }
+    }
 }
 
 void changePasswordForUser(int signedInUserId){
     vector<UserOfProgram> allUsers = readUsersDataFromFile();
     for (int i = 0; i < allUsers.size(); i++){
         if (allUsers[i].userId == signedInUserId){
-            string newPassword = checkPasswordWithVerification();
+            string newPassword = insertNewPassword();
             allUsers[i].userPassword = newPassword;
             break;
         }
     }
+    cout << "Zmieniono haslo" << endl;
     saveUserDataToFile(allUsers);
 }
 
@@ -477,7 +562,7 @@ int menuForSignedInUser(int signedUserId){
         break;
         case 5: listOfUserContacts = deleteContact(listOfUserContacts);
         break;
-        case 6: listOfUserContacts = editContactMenu(listOfUserContacts);
+        case 6: listOfUserContacts = editContactMenu(listOfUserContacts, signedUserId);
         break;
         case 7: changePasswordForUser(signedUserId);
         break;
@@ -486,9 +571,9 @@ int menuForSignedInUser(int signedUserId){
         case 9: exit(0);
         break;
         }
+        Sleep(1500);
+        system("cls");
     }
-    Sleep(1500);
-    system("cls");
 }
 
 int main(){
