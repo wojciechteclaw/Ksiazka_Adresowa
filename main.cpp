@@ -318,12 +318,8 @@ Contact getDataForNewUser(){
 
 vector <Contact> addContactToDataBase(vector<Contact> listOfAllContacts, int signedUserId){
     int lastContactOnTheListId;
-    if (listOfAllContacts.empty()){
-        lastContactOnTheListId = 0;
-    }
-    else{
-        lastContactOnTheListId = maxUsedId();
-    }
+    lastContactOnTheListId = maxUsedId();
+
     int idNumber = lastContactOnTheListId + 1;
     Contact contact = getDataForNewUser();
     contact.contactId = idNumber;
