@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 #include <windows.h>
 #include <stdio.h>
 #include <sstream>
@@ -300,19 +301,45 @@ int maxUsedId(){
     return maxNumber;
 }
 
+
+string changeLettersToLower(string textToChange)
+{
+    if (!textToChange.empty())
+    {
+        transform(textToChange.begin(), textToChange.end(), textToChange.begin(), ::tolower);
+    }
+    return textToChange;
+}
+
+string changeFirstLetterToCapitalAndRestToLower(string textToChange)
+{
+    if (!textToChange.empty())
+    {
+        transform(textToChange.begin(), textToChange.end(), textToChange.begin(), ::tolower);
+        textToChange[0] = toupper(textToChange[0]);
+    }
+    return textToChange;
+}
+
 Contact getDataForNewUser(){
     Contact contact;
+    string nameInput, surnameInput, addressInput, emailInput, phoneInput;
     cin.sync();
     cout << "Podaj imie: ";
-    getline(cin, contact.name);
+    getline(cin, nameInput);
     cout << "Podaj nazwisko: ";
-    getline(cin, contact.surname);
+    getline(cin, surnameInput);
     cout << "Podaj adres: ";
-    getline(cin,contact.adres);
+    getline(cin,addressInput);
     cout << "Podaj email: ";
-    getline(cin, contact.email);
+    getline(cin, emailInput);
     cout << "Podaj numer telefonu: ";
-    getline(cin, contact.phoneNumber);
+    getline(cin, phoneInput);
+    contact.name = changeFirstLetterToCapitalAndRestToLower(nameInput);
+    contact.surname = changeFirstLetterToCapitalAndRestToLower(surnameInput);
+    contact.adres = changeFirstLetterToCapitalAndRestToLower(addressInput);
+    contact.email = changeLettersToLower(emailInput);
+    contact.phoneNumber = changeFirstLetterToCapitalAndRestToLower(phoneInput);
     return contact;
 }
 
