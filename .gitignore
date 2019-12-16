@@ -1,0 +1,8 @@
+ks-strukt*
+*.cbp
+bin/
+obj/
+*.layout
+*.depend
+*.txt
+*.cscope_file_list
