@@ -14,7 +14,7 @@ class KsiazkaAdresowa
     UzytkownikMenadzer uzytkownikMenadzer;
     AdresatMenadzer adresMenadzer;
 public:
-    KsiazkaAdresowa(string nazwaPlikuZUzytkownikami) : uzytkownikMenadzer(nazwaPlikuZUzytkownikami) {};
+    KsiazkaAdresowa(string nazwaPlikuZUzytkownikami, string nazwaPlikuZAdresatami) : uzytkownikMenadzer(nazwaPlikuZUzytkownikami), adresMenadzer(nazwaPlikuZAdresatami) {};
     void rejestracjaUzytkownika();
     void wypiszWszystkichUzytkownikow();
     void logowanieUzytkownika();
