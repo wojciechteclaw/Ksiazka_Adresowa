@@ -12,9 +12,19 @@ using namespace std;
 class KsiazkaAdresowa
 {
     UzytkownikMenadzer uzytkownikMenadzer;
-    AdresatMenadzer adresMenadzer;
+    AdresatMenadzer *adresMenadzer;
+    const string NAZWA_PLIKU_Z_ADRESATAMI;
+
 public:
-    KsiazkaAdresowa(string nazwaPlikuZUzytkownikami, string nazwaPlikuZAdresatami) : uzytkownikMenadzer(nazwaPlikuZUzytkownikami), adresMenadzer(nazwaPlikuZAdresatami) {};
+    KsiazkaAdresowa(string nazwaPlikuZUzytkownikami, string nazwaPlikuZAdresatami) : uzytkownikMenadzer(nazwaPlikuZUzytkownikami), NAZWA_PLIKU_Z_ADRESATAMI(nazwaPlikuZAdresatami)
+    {
+        adresMenadzer = NULL;
+    };
+    ~KsiazkaAdresowa()
+    {
+        delete adresMenadzer;
+        adresMenadzer = NULL;
+    }
     void rejestracjaUzytkownika();
     void wypiszWszystkichUzytkownikow();
     void logowanieUzytkownika();
