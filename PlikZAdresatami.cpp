@@ -26,10 +26,9 @@ bool PlikZAdresatami::czyPlikJestPusty(fstream &plikTekstowy)
 
 void PlikZAdresatami::dopiszAdresataDoPliku(Adresat adresat)
 {
-    string nazwaPlikuZAdresatami = "Adresaci.txt"; //do zastapienia jako stala
     string liniaZDanymiAdresata = "";
     fstream plikTekstowy;
-    plikTekstowy.open(nazwaPlikuZAdresatami.c_str(), ios::out | ios::app);
+    plikTekstowy.open(NAZWA_PLIKU_Z_ADRESATAMI.c_str(), ios::out | ios::app);
     if (plikTekstowy.good() == true)
     {
         liniaZDanymiAdresata = ZamienDaneAdresataNaLinieZDanymiOddzielonymiPionowymiKreskami(adresat);
@@ -66,8 +65,7 @@ int PlikZAdresatami::wczytajAdresatowZalogowanegoUzytkownikaZPliku(vector <Adres
     string daneJednegoAdresataOddzielonePionowymiKreskami = "";
     string daneOstaniegoAdresataWPliku = "";
     fstream plikTekstowy;
-    string nazwaPlikuZAdresatami = "Adresaci.txt";
-    plikTekstowy.open(nazwaPlikuZAdresatami.c_str(), ios::in);
+    plikTekstowy.open(NAZWA_PLIKU_Z_ADRESATAMI.c_str(), ios::in);
 
     if (plikTekstowy.good() == true)
     {

@@ -15,6 +15,7 @@ class AdresatMenadzer{
     void wyswietlIloscWyszukanychAdresatow(int);
 
 public:
+    AdresatMenadzer(string nazwaPlikuZAdresatami) : plikZAdresatami(nazwaPlikuZAdresatami) {}
     void dodajAdresata();
     void wyszukajPoImieniu();
     void wyszukajPoNazwisku();
