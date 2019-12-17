@@ -14,9 +14,10 @@ void KsiazkaAdresowa::wypiszWszystkichUzytkownikow()
 
 void KsiazkaAdresowa::logowanieUzytkownika(){
     uzytkownikMenadzer.logowanieUzytkownika();
-    adresMenadzer.ustawIdZalogowanegoUzytkownika(uzytkownikMenadzer.pobierzIdZalogowanegoUzytkownika());
-    adresMenadzer.wczytajKontaktyUzytkownika();
-
+    if (uzytkownikMenadzer.czyUzytkownikJestZalogowany())
+    {
+        adresMenadzer = new AdresatMenadzer(NAZWA_PLIKU_Z_ADRESATAMI, uzytkownikMenadzer.pobierzIdZalogowanegoUzytkownika());
+    }
 }
 
 void KsiazkaAdresowa::wlaczProgram(){
@@ -50,17 +51,17 @@ void KsiazkaAdresowa::wlaczProgram(){
             switch (wybor)
             {
             case '1':
-                adresMenadzer.dodajAdresata();
+                adresMenadzer -> dodajAdresata();
                 cout<< 1 << endl; //idOstatniegoAdresata = dodajAdresata(adresaci, idZalogowanegoUzytkownika, idOstatniegoAdresata);
                 break;
             case '2':
-                adresMenadzer.wyszukajAdresatowPoImieniu();
+                adresMenadzer ->wyszukajAdresatowPoImieniu();
                 break;
             case '3':
                 cout<< 3 << endl; //wyszukajAdresatowPoNazwisku(adresaci);
                 break;
             case '4':
-                adresMenadzer.wyswietlWszystkichAdresatow();
+                adresMenadzer->wyswietlWszystkichAdresatow();
                 break;
             case '5':
                 cout<< 5 << endl; /*
@@ -77,6 +78,8 @@ void KsiazkaAdresowa::wlaczProgram(){
                 break;
             case '8':
                 uzytkownikMenadzer.wyloguj();
+                delete adresMenadzer;
+                adresMenadzer = NULL;
                 }
         }
     }

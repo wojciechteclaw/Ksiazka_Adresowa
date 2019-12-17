@@ -126,3 +126,9 @@ void UzytkownikMenadzer::wyloguj()
 {
     idZalogowanegoUzytkownika = 0;
 }
+
+bool UzytkownikMenadzer::czyUzytkownikJestZalogowany()
+{
+    if (idZalogowanegoUzytkownika > 0) return true;
+    else return false;
+}

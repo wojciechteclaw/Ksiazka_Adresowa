@@ -7,15 +7,15 @@
 #include "PlikZAdresatami.h"
 
 class AdresatMenadzer{
-    int idZalogowanegoUzytkownika;
-    int idOstatniegoAdresata;
     Adresat podajDaneNowegoAdresata();
     vector <Adresat> adresaci;
     PlikZAdresatami plikZAdresatami;
     void wyswietlIloscWyszukanychAdresatow(int);
 
 public:
-    AdresatMenadzer(string nazwaPlikuZAdresatami) : plikZAdresatami(nazwaPlikuZAdresatami) {}
+    AdresatMenadzer(string nazwaPlikuZAdresatami, int idZalogowanegoUzytkownika) : plikZAdresatami(nazwaPlikuZAdresatami, idZalogowanegoUzytkownika) {
+        wczytajKontaktyUzytkownika();
+    }
     void dodajAdresata();
     void wyszukajPoImieniu();
     void wyszukajPoNazwisku();
