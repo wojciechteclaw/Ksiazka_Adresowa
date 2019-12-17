@@ -2,9 +2,10 @@
 
 Adresat AdresatMenadzer::podajDaneNowegoAdresata()
 {
+    /////////// BRAK przypisywania siê numeru ostatniego adresata z listy
     Adresat adresat;
-    int noweId = ++idOstatniegoAdresata;
-    adresat.ustawId(noweId);
+    int test = plikZAdresatami.pobierzIdOstatniegoAdresata();
+    adresat.ustawId(test + 1);
     adresat.ustawIdUzytkownika(idZalogowanegoUzytkownika);
 
     string tekstDoWczytania;
@@ -69,7 +70,7 @@ void AdresatMenadzer::wyswietlWszystkichAdresatow()
 
 void AdresatMenadzer::wczytajKontaktyUzytkownika()
 {
-    idOstatniegoAdresata = plikZAdresatami.wczytajAdresatowZalogowanegoUzytkownikaZPliku(adresaci, idZalogowanegoUzytkownika);
+    plikZAdresatami.wczytajAdresatowZalogowanegoUzytkownikaZPliku(adresaci, idZalogowanegoUzytkownika);
 }
 
 void AdresatMenadzer::wyszukajAdresatowPoImieniu()

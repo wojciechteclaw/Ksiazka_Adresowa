@@ -8,16 +8,16 @@
 
 class AdresatMenadzer{
     int idZalogowanegoUzytkownika;
-    int idOstatniegoAdresata;
     Adresat podajDaneNowegoAdresata();
     vector <Adresat> adresaci;
     PlikZAdresatami plikZAdresatami;
     void wyswietlIloscWyszukanychAdresatow(int);
+    int idOstatniegoAdresata;
 
 public:
     AdresatMenadzer(string nazwaPlikuZAdresatami, int idZalogowanegoUzytkownika) : plikZAdresatami(nazwaPlikuZAdresatami) {
-        this ->idZalogowanegoUzytkownika = idZalogowanegoUzytkownika;
-        this ->wczytajKontaktyUzytkownika();
+        this->idZalogowanegoUzytkownika = idZalogowanegoUzytkownika;
+        wczytajKontaktyUzytkownika();
     }
     void dodajAdresata();
     void wyszukajPoImieniu();
