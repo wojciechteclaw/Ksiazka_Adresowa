@@ -88,6 +88,8 @@ void PlikZAdresatami::wczytajAdresatowZalogowanegoUzytkownikaZPliku(vector <Adre
     {
         idOstatniegoAdresataPliku = pobierzIdAdresataZDanychOddzielonychPionowymiKreskami(daneOstaniegoAdresataWPliku);
     }
+    else
+            idOstatniegoAdresataPliku = 0;
 }
 
 Adresat PlikZAdresatami::pobierzDaneAdresata(string daneAdresataOddzielonePionowymiKreskami)

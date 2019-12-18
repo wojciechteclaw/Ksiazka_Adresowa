@@ -5,7 +5,7 @@ Adresat AdresatMenadzer::podajDaneNowegoAdresata()
     /////////// BRAK przypisywania siê numeru ostatniego adresata z listy
     Adresat adresat;
     int idOstatniegoAdresata = plikZAdresatami.pobierzIdOstatniegoAdresata();
-    adresat.ustawId(idOstatniegoAdresata+ 1);
+    adresat.ustawId(idOstatniegoAdresata + 1);
     int idZalogowanegoUzytkownika = plikZAdresatami.pobierzIdZalogowanegoUzytkownika();
     adresat.ustawIdUzytkownika(idZalogowanegoUzytkownika);
 

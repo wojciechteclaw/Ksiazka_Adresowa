@@ -52,7 +52,6 @@ void KsiazkaAdresowa::wlaczProgram(){
             {
             case '1':
                 adresMenadzer -> dodajAdresata();
-                cout<< 1 << endl; //idOstatniegoAdresata = dodajAdresata(adresaci, idZalogowanegoUzytkownika, idOstatniegoAdresata);
                 break;
             case '2':
                 adresMenadzer ->wyszukajAdresatowPoImieniu();
