@@ -7,5 +7,4 @@ int main()
 {
     KsiazkaAdresowa ksiazkaAdresowa("Uzytkownicy.txt", "Adresaci.txt");
     ksiazkaAdresowa.wlaczProgram();
-
 }
