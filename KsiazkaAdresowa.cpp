@@ -57,20 +57,17 @@ void KsiazkaAdresowa::wlaczProgram(){
                 adresMenadzer ->wyszukajAdresatowPoImieniu();
                 break;
             case '3':
-                cout<< 3 << endl; //wyszukajAdresatowPoNazwisku(adresaci);
+                adresMenadzer -> wyszukajPoNazwisku();
                 break;
             case '4':
                 adresMenadzer->wyswietlWszystkichAdresatow();
                 break;
             case '5':
-                cout<< 5 << endl; /*
-                idUsunietegoAdresata = usunAdresata(adresaci);
-                idOstatniegoAdresata = podajIdOstatniegoAdresataPoUsunieciuWybranegoAdresata(idUsunietegoAdresata, idOstatniegoAdresata);
-                */
+                adresMenadzer ->usunAdresata();
                 break;
             case '6':
                 cout<< 6 << endl;
-                //edytujAdresata(adresaci);
+                adresMenadzer ->edytujAdresata();
                 break;
             case '7':
                  uzytkownikMenadzer.zmianaHaslaZalogowanegoUzytkownika();

@@ -28,6 +28,8 @@ public:
     void wczytajAdresatowZalogowanegoUzytkownikaZPliku(vector <Adresat> &adresaci);
     int pobierzIdOstatniegoAdresata();
     int pobierzIdZalogowanegoUzytkownika();
+    void usunAdresataZPliku(int);
+    void zapiszEdytowanegoAdresata(Adresat);
 };
 
 #endif

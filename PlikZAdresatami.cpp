@@ -153,3 +153,64 @@ int PlikZAdresatami::pobierzIdZalogowanegoUzytkownika()
 {
     return ID_ZALOGOWANEGO_UZYTKOWNIKA;
 }
+
+void PlikZAdresatami::usunAdresataZPliku(int idAdresata)
+{
+    bool czyIstniejeAdresat = false;
+    string daneJednegoAdresataOddzielonePionowymiKreskami = "";
+    fstream plikTymczasowy;
+    fstream plikTekstowy;
+   string daneOstatniegoNieUsunietegoAdresata;
+    plikTekstowy.open(NAZWA_PLIKU_Z_ADRESATAMI.c_str(), ios::in);
+    plikTymczasowy.open("plik_tymczasowy.txt", ios::out);
+    if (plikTekstowy.good() == true && idAdresata != 0)
+    {
+        while(getline(plikTekstowy, daneJednegoAdresataOddzielonePionowymiKreskami))
+        {
+            if(idAdresata == pobierzIdAdresataZDanychOddzielonychPionowymiKreskami(daneJednegoAdresataOddzielonePionowymiKreskami))
+            {
+                czyIstniejeAdresat = true;
+            }
+            else
+            {
+                plikTymczasowy << daneJednegoAdresataOddzielonePionowymiKreskami << endl;
+                daneOstatniegoNieUsunietegoAdresata = daneJednegoAdresataOddzielonePionowymiKreskami;
+            }
+        }
+    }
+    plikTekstowy.close();
+    plikTymczasowy.close();
+    idOstatniegoAdresataPliku = pobierzIdAdresataZDanychOddzielonychPionowymiKreskami(daneOstatniegoNieUsunietegoAdresata);
+    MetodyPomocnicze::usunPlik(NAZWA_PLIKU_Z_ADRESATAMI);
+    MetodyPomocnicze::zmienNazwePliku("plik_tymczasowy.txt", NAZWA_PLIKU_Z_ADRESATAMI);
+}
+
+void PlikZAdresatami::zapiszEdytowanegoAdresata(Adresat edytowanyAdresat)
+{
+    int idAdresata = edytowanyAdresat.pobierzId();
+    bool czyIstniejeAdresat = false;
+    string daneJednegoAdresataOddzielonePionowymiKreskami = "";
+    fstream plikTymczasowy;
+    fstream plikTekstowy;
+    plikTekstowy.open(NAZWA_PLIKU_Z_ADRESATAMI.c_str(), ios::in);
+    plikTymczasowy.open("plik_tymczasowy.txt", ios::out);
+    if (plikTekstowy.good() == true && idAdresata != 0)
+    {
+        while(getline(plikTekstowy, daneJednegoAdresataOddzielonePionowymiKreskami))
+        {
+            if(idAdresata == pobierzIdAdresataZDanychOddzielonychPionowymiKreskami(daneJednegoAdresataOddzielonePionowymiKreskami))
+            {
+                czyIstniejeAdresat = true;
+                plikTymczasowy << ZamienDaneAdresataNaLinieZDanymiOddzielonymiPionowymiKreskami(edytowanyAdresat) << endl;
+            }
+            else
+            {
+                plikTymczasowy << daneJednegoAdresataOddzielonePionowymiKreskami << endl;
+            }
+        }
+    }
+    plikTekstowy.close();
+    plikTymczasowy.close();
+    MetodyPomocnicze::usunPlik(NAZWA_PLIKU_Z_ADRESATAMI);
+    MetodyPomocnicze::zmienNazwePliku("plik_tymczasowy.txt", NAZWA_PLIKU_Z_ADRESATAMI);
+}

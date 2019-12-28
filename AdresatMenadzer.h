@@ -5,6 +5,7 @@
 #include <vector>
 #include "MetodyPomocnicze.h"
 #include "PlikZAdresatami.h"
+#include "MenuInterfejs.h"
 
 class AdresatMenadzer{
     Adresat podajDaneNowegoAdresata();
@@ -23,6 +24,8 @@ public:
     void ustawIdZalogowanegoUzytkownika(int);
     void wczytajKontaktyUzytkownika();
     void wyszukajAdresatowPoImieniu();
+    void usunAdresata();
+    void edytujAdresata();
 };
 
 #endif
