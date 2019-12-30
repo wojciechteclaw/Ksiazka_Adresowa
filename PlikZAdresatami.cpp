@@ -39,7 +39,7 @@ void PlikZAdresatami::dopiszAdresataDoPliku(Adresat adresat)
         }
         else
         {
-            plikTekstowy << liniaZDanymiAdresata << endl ;
+            plikTekstowy << endl << liniaZDanymiAdresata;
         }
         idOstatniegoAdresataPliku++;
     }
@@ -173,7 +173,12 @@ void PlikZAdresatami::usunAdresataZPliku(int idAdresata)
             }
             else
             {
-                plikTymczasowy << daneJednegoAdresataOddzielonePionowymiKreskami << endl;
+                if (czyPlikJestPusty(plikTymczasowy)){
+                        plikTymczasowy << daneJednegoAdresataOddzielonePionowymiKreskami ;
+                }
+                else {
+                        plikTymczasowy << endl << daneJednegoAdresataOddzielonePionowymiKreskami ;
+                }
                 daneOstatniegoNieUsunietegoAdresata = daneJednegoAdresataOddzielonePionowymiKreskami;
             }
         }
