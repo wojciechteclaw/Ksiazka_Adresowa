@@ -39,7 +39,7 @@ void PlikZAdresatami::dopiszAdresataDoPliku(Adresat adresat)
         }
         else
         {
-            plikTekstowy << endl << liniaZDanymiAdresata ;
+            plikTekstowy << liniaZDanymiAdresata << endl ;
         }
         idOstatniegoAdresataPliku++;
     }
