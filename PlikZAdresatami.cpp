@@ -197,6 +197,7 @@ void PlikZAdresatami::zapiszEdytowanegoAdresata(Adresat edytowanyAdresat)
     string daneJednegoAdresataOddzielonePionowymiKreskami = "";
     fstream plikTymczasowy;
     fstream plikTekstowy;
+    string liniaDanych = "";
     plikTekstowy.open(NAZWA_PLIKU_Z_ADRESATAMI.c_str(), ios::in);
     plikTymczasowy.open("plik_tymczasowy.txt", ios::out);
     if (plikTekstowy.good() == true && idAdresata != 0)
@@ -206,11 +207,18 @@ void PlikZAdresatami::zapiszEdytowanegoAdresata(Adresat edytowanyAdresat)
             if(idAdresata == pobierzIdAdresataZDanychOddzielonychPionowymiKreskami(daneJednegoAdresataOddzielonePionowymiKreskami))
             {
                 czyIstniejeAdresat = true;
-                plikTymczasowy << ZamienDaneAdresataNaLinieZDanymiOddzielonymiPionowymiKreskami(edytowanyAdresat) << endl;
+                liniaDanych = ZamienDaneAdresataNaLinieZDanymiOddzielonymiPionowymiKreskami(edytowanyAdresat);
             }
             else
             {
-                plikTymczasowy << daneJednegoAdresataOddzielonePionowymiKreskami << endl;
+                liniaDanych = daneJednegoAdresataOddzielonePionowymiKreskami;
+            }
+            if (czyPlikJestPusty(plikTymczasowy))
+            {
+                plikTymczasowy << liniaDanych;
+            }
+            else {
+                plikTymczasowy << endl << liniaDanych;
             }
         }
     }
